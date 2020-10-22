@@ -1,21 +1,66 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+// In App.js in a new project
 
-export default function App() {
+import * as React from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import { enableScreens } from "react-native-screens";
+import { createNativeStackNavigator } from "react-native-screens/native-stack";
+import { AppearanceProvider, useColorScheme } from "react-native-appearance";
+import {
+  NavigationContainer,
+  DefaultTheme,
+  DarkTheme,
+} from "@react-navigation/native";
+
+enableScreens();
+
+const ModalStack = createNativeStackNavigator();
+
+function HomeScreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("SettingsScreen");
+        }}
+      >
+        <Text>Show Settings Screen</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+function SettingsScreen() {
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text>Welcome to Settings Screen</Text>
+    </View>
+  );
+}
+
+function HomeNavigator() {
+  return (
+    <ModalStack.Navigator screenOptions={{ headerShown: false }}>
+      <ModalStack.Screen name="HomeScreen" component={HomeScreen} />
+      <ModalStack.Screen
+        name="SettingsScreen"
+        component={SettingsScreen}
+        options={{ stackPresentation: "modal" }}
+      />
+    </ModalStack.Navigator>
+  );
+}
+
+const Stack = createNativeStackNavigator();
+
+export default () => {
+  const scheme = useColorScheme();
+  return (
+    <AppearanceProvider>
+      <NavigationContainer theme={scheme === "dark" ? DarkTheme : DefaultTheme}>
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={HomeNavigator} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AppearanceProvider>
+  );
+};
